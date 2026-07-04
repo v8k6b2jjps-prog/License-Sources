@@ -2,6 +2,34 @@
 using namespace System.Collections.Generic
 using namespace System.Runtime.InteropServices
 
+<#
+typedef struct _MSFT_PKEY_DATA {
+    uint64_t Reserved;                 // 0x00 (0x20 relative to PID_OBJ)
+    wchar_t* ProductIdStr;             // 0x08 -> Points to "msft2005:[GUID]&[Base64->MatrixAddress-0x68]"
+    void*    ????;                     // 0x10 -> Int64 Address Pointer
+    uint32_t GroupID;                  // 0x18 (0x38) - e.g., 189
+    uint32_t Serial_A;                 // 0x1C (0x3C) - Serial Part, Partial
+    uint32_t Serial_B;                 // 0x20 (0x40) - Serial Part, Partial
+    uint32_t LicenseFlags;             // 0x24 (0x44) - Checked by your script at offset 0x44
+    uint64_t OperationalFlags;         // 0x28 (0x48)
+    void*    ????;                     // 0x30 (0x50)
+    uint8_t  RawKeyMaterial[16];       // 0x38 (0x58) - RAW CD KEY Bytes
+} MSFT_PKEY_DATA;                      // Total Size: 0x48 bytes
+
+typedef struct _PID_OBJ {
+    uint64_t        RefCount;          // 0x00
+    wchar_t*        ProductIdStr;      // 0x08
+    FILETIME        ValidationTime;    // 0x10
+    uint32_t        DataIdSequence;    // 0x18, Serial Part, Full, As INT32
+    uint32_t        AlignmentPadding;  // 0x1C
+    MSFT_PKEY_DATA  Data;              // 0x20 - 0x68
+    void*    pPKeyConfig;              // 0x68 - XRM-MS matrix row
+    void*    pKeyBits;                 // 0x70
+    void*    pMetadata;                // 0x78
+    uint64_t UnknownTail;              // 0x80
+} PID_OBJ;
+#>
+
 function Format-HexView {
     [CmdletBinding(DefaultParameterSetName = "ByteArray")]
     param (
